@@ -5,7 +5,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "spago bundle-app -t dist/index.js",
+    "build": "spago bundle-app -m Macro.Main -t dist/sakura-calculator.js",
     "test": "spago test"
   },
   "repository": {

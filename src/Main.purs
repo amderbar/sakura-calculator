@@ -1,8 +1,10 @@
-module Main where
+module Macro.Main where
 
 import Prelude
 import Effect (Effect)
-import Effect.Console (log)
+import Macro.Sakura.Editor as Editor
 
 main :: Effect Unit
-main = pure unit
+main = do
+  selected <- Editor.getSelectedString
+  Editor.insText (selected <> "test")
