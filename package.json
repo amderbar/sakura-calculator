@@ -1,0 +1,26 @@
+{
+  "name": "sakura-calculator",
+  "version": "1.0.0",
+  "description": "サクラエディタで計算をするマクロ",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "spago bundle-app -t dist/index.js",
+    "test": "spago test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amderbar/sakura-calculator.git"
+  },
+  "author": "amderbar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/amderbar/sakura-calculator/issues"
+  },
+  "homepage": "https://github.com/amderbar/sakura-calculator#readme",
+  "devDependencies": {
+    "purescript": "^0.14.1",
+    "purty": "^7.0.0",
+    "spago": "^0.20.3"
+  }
+}
