@@ -30,3 +30,14 @@ exports.insText = function insText(text) {
 exports.getSelectedString = function getSelectedString() {
     return Editor.GetSelectedString(0);
 };
+
+/**
+ * エラーメッセージボックスを表示する
+ * @param {string} text
+ * @returns
+ */
+exports.errorMsg = function errorMsg(text) {
+    return function () {
+        Editor.ErrorMsg(text);
+    }
+}

@@ -11,7 +11,19 @@ When creating a new Spago project, you can use
 to generate this file without the comments in this block.
 -}
 { name = "sakura-calculator"
-, dependencies = [ "console", "effect", "functions", "prelude", "psci-support" ]
+, dependencies =
+  [ "aff"
+  , "control"
+  , "effect"
+  , "either"
+  , "newtype"
+  , "parsing"
+  , "prelude"
+  , "psci-support"
+  , "quickcheck"
+  , "spec"
+  , "spec-quickcheck"
+  ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }

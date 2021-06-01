@@ -6,3 +6,5 @@ import Effect (Effect)
 foreign import insText :: String -> Effect Unit
 
 foreign import getSelectedString :: Effect String
+
+foreign import errorMsg :: String -> Effect Unit
