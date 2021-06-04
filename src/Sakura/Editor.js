@@ -2,42 +2,33 @@
 
 /**
  * @global Editor sakura editor object
+ * @returns {Editor}
+ * @throws {ReferenceError} Editor が未定義な場合
  */
-// if (typeof (Editor) !== 'undefined') {
-//     doSomething();
-// } else {
-//     if (typeof (WScript) !== 'undefined') {
-//         WScript.Echo('[Warn] This script is for sakura macro. A env is maybe wsh.')
-//     } else {
-//         console.log('[Warn] This script is for sakura macro. A env is maybe node.')
-//     }
-// }
+exports.getEditor = function getEditor() {
+    return Editor;
+}
 
 /**
  * エディタのカーソル位置に文字列を挿入する
  * @param {string} text
  */
-exports.insText = function insText(text) {
-    return function () {
-        Editor.InsText(text);
-    }
+exports.insTextImpl = function insTextImpl(text, editor) {
+    editor.InsText(text);
 };
 
 /**
  * 選択状態の文字列を取得する
- * @returns string
+ * @returns {string}
  */
-exports.getSelectedString = function getSelectedString() {
-    return Editor.GetSelectedString(0);
+exports.getSelectedStringImpl = function getSelectedStringImpl(editor) {
+    return editor.GetSelectedString(0);
 };
 
 /**
  * エラーメッセージボックスを表示する
  * @param {string} text
- * @returns
  */
-exports.errorMsg = function errorMsg(text) {
-    return function () {
-        Editor.ErrorMsg(text);
-    }
+exports.errorMsgImpl = function errorMsgImpl(text, editor) {
+    editor.ErrorMsg(text);
 }

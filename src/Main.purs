@@ -8,7 +8,7 @@ import Macro.DSL as DSL
 import Macro.Sakura.Editor as Editor
 
 main :: Effect Unit
-main = do
+main = Editor.runMacro do
   selected <- Editor.getSelectedString
   case DSL.eval selected of
     Right ret -> Editor.insText ret
