@@ -30,7 +30,7 @@ sakuraCalcLangage =
       }
   where
   op' :: forall m. (Monad m) => ParserT String m Char
-  op' = oneOf [ '*', '+', '/', '-', '^' ]
+  op' = oneOf [ '*', '+', '/', '%', '-', '^' ]
 
 tokenParser :: TokenParser
 tokenParser = makeTokenParser sakuraCalcLangage
@@ -44,6 +44,7 @@ expression = fix \expr -> buildExprParser operatorTable (integer <|> parens expr
   operatorTable =
     [ [ Infix (reservedOp "^" $> pow) AssocLeft ]
     , [ Infix (reservedOp "/" $> (/)) AssocLeft ]
+    , [ Infix (reservedOp "%" $> mod) AssocLeft ]
     , [ Infix (reservedOp "*" $> (*)) AssocLeft ]
     , [ Infix (reservedOp "-" $> (-)) AssocLeft ]
     , [ Infix (reservedOp "+" $> (+)) AssocLeft ]

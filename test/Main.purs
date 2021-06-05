@@ -45,6 +45,8 @@ main =
               quickCheck $ propArithmeticOperator (*) \i j -> show i <> " * " <> show j
             it "should return the right quotient" do
               quickCheck $ propArithmeticOperator (/) \i j -> show i <> " / " <> show j
+            it "should return the right remainder" do
+              quickCheck $ propArithmeticOperator mod \i j -> show i <> " % " <> show j
             it "should return the right power" do
               quickCheck $ propArithmeticOperator pow \i j -> show i <> " ^ " <> show j
           describe "parentheses" do
@@ -55,6 +57,7 @@ main =
               quickCheck $ propArithmeticOperator (-) \i j -> "(" <> show i <> " - " <> show j <> ")"
               quickCheck $ propArithmeticOperator (*) \i j -> "(" <> show i <> " * " <> show j <> ")"
               quickCheck $ propArithmeticOperator (/) \i j -> "(" <> show i <> " / " <> show j <> ")"
+              quickCheck $ propArithmeticOperator mod \i j -> "(" <> show i <> " % " <> show j <> ")"
               quickCheck $ propArithmeticOperator pow \i j -> "(" <> show i <> " ^ " <> show j <> ")"
             it "should be evaluated from inside the nested parentheses" do
               parseDSL "(1 + 2) / 3" `shouldEqual` Right 1
