@@ -1,19 +1,19 @@
-"use strict";
+'use strict';
 
 /**
  * @global Editor sakura editor object
  * @returns {Editor}
  * @throws {ReferenceError} Editor が未定義な場合
  */
-exports.getEditor = function getEditor() {
+exports.getEditor = function getEditor () {
     return Editor;
-}
+};
 
 /**
  * エディタのカーソル位置に文字列を挿入する
  * @param {string} text
  */
-exports.insTextImpl = function insTextImpl(text, editor) {
+exports.insTextImpl = function insTextImpl (text, editor) {
     editor.InsText(text);
 };
 
@@ -21,7 +21,7 @@ exports.insTextImpl = function insTextImpl(text, editor) {
  * 選択状態の文字列を取得する
  * @returns {string}
  */
-exports.getSelectedStringImpl = function getSelectedStringImpl(editor) {
+exports.getSelectedStringImpl = function getSelectedStringImpl (editor) {
     return editor.GetSelectedString(0);
 };
 
@@ -29,6 +29,6 @@ exports.getSelectedStringImpl = function getSelectedStringImpl(editor) {
  * エラーメッセージボックスを表示する
  * @param {string} text
  */
-exports.errorMsgImpl = function errorMsgImpl(text, editor) {
+exports.errorMsgImpl = function errorMsgImpl (text, editor) {
     editor.ErrorMsg(text);
-}
+};

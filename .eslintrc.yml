@@ -1,0 +1,16 @@
+root: true
+env:
+  commonjs: true
+globals:
+  Editor: true
+extends:
+  - standard
+parserOptions:
+  ecmaVersion: 12
+rules:
+  indent: [error, 4]
+  semi: [error, always]
+  semi-style: [error, last]
+  no-extra-semi: error
+  no-unexpected-multiline: error
+  no-unreachable: error
