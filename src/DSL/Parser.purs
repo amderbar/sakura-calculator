@@ -5,6 +5,7 @@ import Prelude hiding (between)
 import Control.Alt ((<|>))
 import Control.Lazy (fix)
 import Data.Either (Either)
+import Data.Int (pow)
 import Text.Parsing.Parser (Parser, ParseError, ParserT, runParser)
 import Text.Parsing.Parser.Expr (Assoc(..), Operator(..), buildExprParser)
 import Text.Parsing.Parser.Language (emptyDef)
@@ -29,7 +30,7 @@ sakuraCalcLangage =
       }
   where
   op' :: forall m. (Monad m) => ParserT String m Char
-  op' = oneOf [ '*', '+', '/', '-' ]
+  op' = oneOf [ '*', '+', '/', '-', '^' ]
 
 tokenParser :: TokenParser
 tokenParser = makeTokenParser sakuraCalcLangage
@@ -41,7 +42,8 @@ expression = fix \expr -> buildExprParser operatorTable (integer <|> parens expr
   parens = tokenParser.parens
   reservedOp = tokenParser.reservedOp
   operatorTable =
-    [ [ Infix (reservedOp "/" $> (/)) AssocLeft ]
+    [ [ Infix (reservedOp "^" $> pow) AssocLeft ]
+    , [ Infix (reservedOp "/" $> (/)) AssocLeft ]
     , [ Infix (reservedOp "*" $> (*)) AssocLeft ]
     , [ Infix (reservedOp "-" $> (-)) AssocLeft ]
     , [ Infix (reservedOp "+" $> (+)) AssocLeft ]

@@ -2,6 +2,7 @@ module Test.Main where
 
 import Prelude
 import Data.Either (Either(..))
+import Data.Int (pow)
 import Data.Newtype (class Newtype, unwrap)
 import Effect (Effect)
 import Effect.Aff (launchAff_)
@@ -44,6 +45,8 @@ main =
               quickCheck $ propArithmeticOperator (*) \i j -> show i <> " * " <> show j
             it "should return the right quotient" do
               quickCheck $ propArithmeticOperator (/) \i j -> show i <> " / " <> show j
+            it "should return the right power" do
+              quickCheck $ propArithmeticOperator pow \i j -> show i <> " ^ " <> show j
           describe "parentheses" do
             it "should parse single value in parentheses" do
               quickCheck \(i :: Int) -> parseDSL ("(" <> show i <> ")") == Right i
@@ -52,6 +55,7 @@ main =
               quickCheck $ propArithmeticOperator (-) \i j -> "(" <> show i <> " - " <> show j <> ")"
               quickCheck $ propArithmeticOperator (*) \i j -> "(" <> show i <> " * " <> show j <> ")"
               quickCheck $ propArithmeticOperator (/) \i j -> "(" <> show i <> " / " <> show j <> ")"
+              quickCheck $ propArithmeticOperator pow \i j -> "(" <> show i <> " ^ " <> show j <> ")"
             it "should be evaluated from inside the nested parentheses" do
               parseDSL "(1 + 2) / 3" `shouldEqual` Right 1
               parseDSL "3 / (1 + 2)" `shouldEqual` Right 1
