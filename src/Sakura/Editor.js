@@ -13,7 +13,7 @@ exports.getEditor = function getEditor () {
  * エディタのカーソル位置に文字列を挿入する
  * @param {string} text
  */
-exports.insTextImpl = function insTextImpl (text, editor) {
+exports.insTextImpl = function insTextImpl (editor, text) {
     editor.InsText(text);
 };
 
@@ -29,6 +29,6 @@ exports.getSelectedStringImpl = function getSelectedStringImpl (editor) {
  * エラーメッセージボックスを表示する
  * @param {string} text
  */
-exports.errorMsgImpl = function errorMsgImpl (text, editor) {
+exports.errorMsgImpl = function errorMsgImpl (editor, text) {
     editor.ErrorMsg(text);
 };

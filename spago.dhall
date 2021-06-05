@@ -23,6 +23,7 @@ to generate this file without the comments in this block.
   , "quickcheck"
   , "spec"
   , "spec-quickcheck"
+  , "transformers"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
