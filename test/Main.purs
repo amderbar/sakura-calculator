@@ -6,7 +6,7 @@ import Data.Int (pow)
 import Data.Newtype (class Newtype, unwrap)
 import Effect (Effect)
 import Effect.Aff (launchAff_)
-import Macro.DSL.Parser (parseDSL)
+import Macro.DSL (run) as DSL
 import Test.QuickCheck ((<?>))
 import Test.QuickCheck (Result) as QuickCheck
 import Test.QuickCheck.Arbitrary (class Arbitrary, arbitrary)
@@ -35,7 +35,7 @@ main =
         describe "sakura-calculator DSL Parser" do
           describe "single value" do
             it "should parse digit string to int" do
-              quickCheck \(i :: Int) -> parseDSL (show i) == Right i
+              quickCheck \(i :: Int) -> DSL.run (show i) == Right i
           describe "arithmetic operators" do
             it "should return the right total" do
               quickCheck $ propArithmeticOperator (+) \i j -> show i <> " + " <> show j
@@ -51,7 +51,7 @@ main =
               quickCheck $ propArithmeticOperator pow \i j -> show i <> " ^ " <> show j
           describe "parentheses" do
             it "should parse single value in parentheses" do
-              quickCheck \(i :: Int) -> parseDSL ("(" <> show i <> ")") == Right i
+              quickCheck \(i :: Int) -> DSL.run ("(" <> show i <> ")") == Right i
             it "should parse expression in parentheses" do
               quickCheck $ propArithmeticOperator (+) \i j -> "(" <> show i <> " + " <> show j <> ")"
               quickCheck $ propArithmeticOperator (-) \i j -> "(" <> show i <> " - " <> show j <> ")"
@@ -60,18 +60,18 @@ main =
               quickCheck $ propArithmeticOperator mod \i j -> "(" <> show i <> " % " <> show j <> ")"
               quickCheck $ propArithmeticOperator pow \i j -> "(" <> show i <> " ^ " <> show j <> ")"
             it "should be evaluated from inside the nested parentheses" do
-              parseDSL "(1 + 2) / 3" `shouldEqual` Right 1
-              parseDSL "3 / (1 + 2)" `shouldEqual` Right 1
-              parseDSL "((1 + 2) / 3)" `shouldEqual` Right 1
-              parseDSL "(3 / (1 + 2))" `shouldEqual` Right 1
-              parseDSL "- (3 / (- (1 + 2)))" `shouldEqual` Right 1
+              DSL.run "(1 + 2) / 3" `shouldEqual` Right 1
+              DSL.run "3 / (1 + 2)" `shouldEqual` Right 1
+              DSL.run "((1 + 2) / 3)" `shouldEqual` Right 1
+              DSL.run "(3 / (1 + 2))" `shouldEqual` Right 1
+              DSL.run "- (3 / (- (1 + 2)))" `shouldEqual` Right 1
 
 propArithmeticOperator :: (Int -> Int -> Int) -> (NonNegative -> NonNegative -> String) -> NonNegative -> NonNegative -> QuickCheck.Result
 propArithmeticOperator op mkSrc i j =
   let
     src = mkSrc i j
 
-    actual = parseDSL src
+    actual = DSL.run src
 
     expected = Right (unwrap i `op` unwrap j)
   in

@@ -10,6 +10,6 @@ import Macro.Sakura.Editor as Editor
 main :: Effect Unit
 main = Editor.runMacro do
   selected <- Editor.getSelectedString
-  case DSL.eval selected of
-    Right ret -> Editor.insText ret
+  case DSL.run selected of
+    Right ret -> Editor.insText (show ret)
     Left err -> Editor.errorMsg err
