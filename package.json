@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "spago bundle-app -m Macro.Main -t dist/sakura-calculator.js",
+    "lint": "eslint src",
     "test": "spago test"
   },
   "repository": {
@@ -19,8 +20,14 @@
   },
   "homepage": "https://github.com/amderbar/sakura-calculator#readme",
   "devDependencies": {
+    "eslint": "^7.28.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
     "purescript": "^0.14.1",
     "purty": "^7.0.0",
     "spago": "^0.20.3"
-  }
+  },
+  "dependencies": {}
 }

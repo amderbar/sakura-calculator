@@ -16,13 +16,17 @@ to generate this file without the comments in this block.
   , "control"
   , "effect"
   , "either"
+  , "integers"
+  , "math"
   , "newtype"
+  , "numbers"
   , "parsing"
   , "prelude"
   , "psci-support"
   , "quickcheck"
   , "spec"
   , "spec-quickcheck"
+  , "transformers"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

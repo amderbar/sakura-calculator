@@ -8,8 +8,12 @@ import Macro.DSL as DSL
 import Macro.Sakura.Editor as Editor
 
 main :: Effect Unit
-main = do
+main = Editor.runMacro do
   selected <- Editor.getSelectedString
-  case DSL.eval selected of
-    Right ret -> Editor.insText ret
+  case DSL.run selected of
+    Right ret -> Editor.insText (showValue ret)
     Left err -> Editor.errorMsg err
+  where
+  showValue :: DSL.Value -> String
+  showValue (DSL.IntValue i) = show i
+  showValue (DSL.FloatValue n) = show n
