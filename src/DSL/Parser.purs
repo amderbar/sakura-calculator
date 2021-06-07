@@ -4,7 +4,7 @@ import Prelude hiding (between)
 
 import Control.Alt ((<|>))
 import Control.Lazy (fix)
-import Data.Either (Either)
+import Data.Either (Either(..))
 import Macro.DSL.Core as DSL
 import Text.Parsing.Parser (Parser, ParseError, runParser)
 import Text.Parsing.Parser.Expr (Assoc(..), Operator(..), buildExprParser)
@@ -27,9 +27,11 @@ tokenParser :: TokenParser
 tokenParser = makeTokenParser sakuraCalcLangage
 
 expression :: Parser String DSL.Expression
-expression = fix \expr -> buildExprParser operatorTable (integer <|> parens expr)
+expression = fix \expr -> buildExprParser operatorTable (number <|> parens expr)
   where
-  integer = DSL.int <$> tokenParser.integer
+  number = tokenParser.naturalOrFloat <#> case _ of
+    Left i -> DSL.int i
+    Right n -> DSL.float n
   parens = tokenParser.parens
   reservedOp = tokenParser.reservedOp
   operatorTable =
