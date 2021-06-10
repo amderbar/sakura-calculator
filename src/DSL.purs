@@ -1,23 +1,32 @@
-module Macro.DSL (run, eval, module Macro.DSL.Core) where
+module Macro.DSL (run, eval, showResult) where
 
 import Prelude
+
+import Data.Array (length)
 import Data.Either (Either(..))
+import Data.Foldable (sum)
 import Data.Int (pow) as Int
 import Data.Int (toNumber)
-import Macro.DSL.Core (Expression(..), Operator(..), Value(..))
+import Data.Traversable (traverse)
+import Macro.DSL.Core (Expression(..), Operator(..), BiltinFunction(..), Numeric(..))
 import Macro.DSL.Parser (parseDSL)
 import Math (pow) as Math
-import Text.Parsing.Parser (parseErrorMessage)
 
-run :: String -> Either String Value
+run :: String -> Either String Numeric
 run src = do
   ast <- case parseDSL src of
     Right ret -> pure ret
-    Left err -> Left (parseErrorMessage err)
+    Left err -> Left (show err)
   eval ast
 
-eval :: Expression -> Either String Value
+eval :: Expression -> Either String Numeric
 eval (ValueExpr v) = pure v
+
+eval (AggExpr f v) = case f of
+  Sum -> sum <$> traverse eval v
+  Avg -> do
+    total <- eval (AggExpr Sum v)
+    pure $ total / (Integer $ length v)
 
 eval (BinOpExpr op expr1 expr2) = do
   ret1 <- eval expr1
@@ -31,7 +40,16 @@ eval (BinOpExpr op expr1 expr2) = do
     Div -> div
     Mod -> mod
     Pow -> pow
-  pow (IntValue a) (IntValue b) = IntValue (a `Int.pow` b)
-  pow (IntValue a) (FloatValue b) = FloatValue (toNumber a `Math.pow` b)
-  pow (FloatValue a) (IntValue b) = FloatValue (a `Math.pow` toNumber b)
-  pow (FloatValue a) (FloatValue b) = FloatValue (a `Math.pow` b)
+
+  pow (Integer a) (Integer b) = Integer (a `Int.pow` b)
+
+  pow (Integer a) (Float b) = Float (toNumber a `Math.pow` b)
+
+  pow (Float a) (Integer b) = Float (a `Math.pow` toNumber b)
+
+  pow (Float a) (Float b) = Float (a `Math.pow` b)
+
+showResult :: Numeric -> String
+showResult (Integer i) = show i
+
+showResult (Float n) = show n

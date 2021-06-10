@@ -1,10 +1,10 @@
 module Macro.DSL.Parser where
 
 import Prelude hiding (between)
-
 import Control.Alt ((<|>))
 import Control.Lazy (fix)
-import Data.Either (Either(..))
+import Data.Array (fromFoldable)
+import Data.Either (Either)
 import Macro.DSL.Core as DSL
 import Text.Parsing.Parser (Parser, ParseError, runParser)
 import Text.Parsing.Parser.Expr (Assoc(..), Operator(..), buildExprParser)
@@ -21,19 +21,33 @@ sakuraCalcLangage =
     (unGenLanguageDef emptyDef)
       { nestedComments = false
       , caseSensitive = false
+      , reservedNames = [ "sum", "avg" ]
       }
 
 tokenParser :: TokenParser
 tokenParser = makeTokenParser sakuraCalcLangage
 
 expression :: Parser String DSL.Expression
-expression = fix \expr -> buildExprParser operatorTable (number <|> parens expr)
+expression = fix \expr -> buildExprParser operatorTable $ number <|> aggregation expr <|> parens expr
   where
-  number = tokenParser.naturalOrFloat <#> case _ of
-    Left i -> DSL.int i
-    Right n -> DSL.float n
+  number = DSL.numeric <$> tokenParser.naturalOrFloat
+
+  builtinFunc =
+    (reserved "sum" $> DSL.Sum)
+      <|> (reserved "avg" $> DSL.Avg)
+
+  aggregation e = DSL.AggExpr <$> builtinFunc <*> (brackets $ fromFoldable <$> commaSep e)
+
+  brackets = tokenParser.brackets
+
+  commaSep = tokenParser.commaSep
+
   parens = tokenParser.parens
+
+  reserved = tokenParser.reserved
+
   reservedOp = tokenParser.reservedOp
+
   operatorTable =
     [ [ Infix (reservedOp "^" $> DSL.pow) AssocLeft ]
     , [ Infix (reservedOp "/" $> DSL.div) AssocLeft ]
