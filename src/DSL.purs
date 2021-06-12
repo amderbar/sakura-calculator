@@ -30,18 +30,16 @@ eval (FuncApplyExpr f) = case f of
   Round v -> intFunc Int.round <$> eval v
   Floor v -> intFunc Int.floor <$> eval v
   Ceil v -> intFunc Int.ceil <$> eval v
-  Sqrt v -> floatFunc Math.sqrt v
-  Log v -> floatFunc Math.log v
+  Sqrt v -> floatFunc Math.sqrt <$> eval v
+  Log v -> floatFunc Math.log <$> eval v
   where
   intFunc :: (Number -> Int) -> Numeric -> Numeric
   intFunc func = case _ of
     n@(Integer _) -> n
     (Float n) -> Integer (func n)
 
-  floatFunc :: (Number -> Number) -> Expression -> Either String Numeric
-  floatFunc func e = do
-    m <- toNumber <$> eval e
-    pure (Float $ func m)
+  floatFunc :: (Number -> Number) -> Numeric -> Numeric
+  floatFunc func = Float <<< func <<< toNumber
 
 eval (BinOpExpr op expr1 expr2) = do
   ret1 <- eval expr1
@@ -61,6 +59,6 @@ eval (BinOpExpr op expr1 expr2) = do
   pow a b = Float (toNumber a `Math.pow` toNumber b)
 
 showResult :: Numeric -> String
-showResult (Integer i) = show i
-
-showResult (Float n) = show n
+showResult = case _ of
+  (Integer i) -> show i
+  (Float n) -> show n
