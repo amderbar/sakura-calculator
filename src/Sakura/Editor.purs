@@ -31,7 +31,8 @@ getSelectedString = ask >>= lift <<< runEffectFn1 getSelectedStringImpl
 errorMsg :: String -> Macro Unit
 errorMsg msg = ask >>= \e -> lift (runEffectFn2 errorMsgImpl e msg)
 
-type Macro a = ReaderT Editor Effect a
+type Macro a
+  = ReaderT Editor Effect a
 
 runMacro :: forall a. Macro a -> Effect a
 runMacro m = getEditor >>= runReaderT m

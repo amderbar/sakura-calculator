@@ -13,9 +13,11 @@ to generate this file without the comments in this block.
 { name = "sakura-calculator"
 , dependencies =
   [ "aff"
+  , "arrays"
   , "control"
   , "effect"
   , "either"
+  , "foldable-traversable"
   , "integers"
   , "math"
   , "newtype"

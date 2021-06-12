@@ -1,23 +1,45 @@
-module Macro.DSL (run, eval, module Macro.DSL.Core) where
+module Macro.DSL (run, eval, showResult) where
 
 import Prelude
+import Data.Array (length)
 import Data.Either (Either(..))
-import Data.Int (pow) as Int
-import Data.Int (toNumber)
-import Macro.DSL.Core (Expression(..), Operator(..), Value(..))
+import Data.Foldable (sum)
+import Data.Int (ceil, floor, pow, round) as Int
+import Data.Ord (abs)
+import Data.Traversable (traverse)
+import Macro.DSL.Core (BiltinFunction(..), Expression(..), Numeric(..), Operator(..), toNumber)
 import Macro.DSL.Parser (parseDSL)
-import Math (pow) as Math
-import Text.Parsing.Parser (parseErrorMessage)
+import Math (log, pow, sqrt) as Math
 
-run :: String -> Either String Value
+run :: String -> Either String Numeric
 run src = do
   ast <- case parseDSL src of
     Right ret -> pure ret
-    Left err -> Left (parseErrorMessage err)
+    Left err -> Left (show err)
   eval ast
 
-eval :: Expression -> Either String Value
+eval :: Expression -> Either String Numeric
 eval (ValueExpr v) = pure v
+
+eval (FuncApplyExpr f) = case f of
+  Sum v -> sum <$> traverse eval v
+  Avg v -> do
+    total <- eval (FuncApplyExpr (Sum v))
+    pure $ total / (Integer $ length v)
+  Abs v -> abs <$> eval v
+  Round v -> intFunc Int.round <$> eval v
+  Floor v -> intFunc Int.floor <$> eval v
+  Ceil v -> intFunc Int.ceil <$> eval v
+  Sqrt v -> floatFunc Math.sqrt <$> eval v
+  Log v -> floatFunc Math.log <$> eval v
+  where
+  intFunc :: (Number -> Int) -> Numeric -> Numeric
+  intFunc func = case _ of
+    n@(Integer _) -> n
+    (Float n) -> Integer (func n)
+
+  floatFunc :: (Number -> Number) -> Numeric -> Numeric
+  floatFunc func = Float <<< func <<< toNumber
 
 eval (BinOpExpr op expr1 expr2) = do
   ret1 <- eval expr1
@@ -31,7 +53,12 @@ eval (BinOpExpr op expr1 expr2) = do
     Div -> div
     Mod -> mod
     Pow -> pow
-  pow (IntValue a) (IntValue b) = IntValue (a `Int.pow` b)
-  pow (IntValue a) (FloatValue b) = FloatValue (toNumber a `Math.pow` b)
-  pow (FloatValue a) (IntValue b) = FloatValue (a `Math.pow` toNumber b)
-  pow (FloatValue a) (FloatValue b) = FloatValue (a `Math.pow` b)
+
+  pow (Integer a) (Integer b) = Integer (a `Int.pow` b)
+
+  pow a b = Float (toNumber a `Math.pow` toNumber b)
+
+showResult :: Numeric -> String
+showResult = case _ of
+  (Integer i) -> show i
+  (Float n) -> show n

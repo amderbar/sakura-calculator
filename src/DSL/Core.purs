@@ -1,60 +1,54 @@
 module Macro.DSL.Core where
 
 import Prelude hiding (div, mod)
-
+import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
-import Data.Int (toNumber)
+import Data.Int (toNumber) as Int
 import Data.Show.Generic (genericShow)
 import Prelude (div, mod) as Pre
 
 -- 値
-data Value
-  = IntValue Int
-  | FloatValue Number
+data Numeric
+  = Integer Int
+  | Float Number
 
-derive instance eqValue :: Eq Value
+toNumber :: Numeric -> Number
+toNumber = case _ of
+  Integer i -> Int.toNumber i
+  Float n -> n
 
-derive instance genericValue :: Generic Value _
+derive instance eqNumeric :: Eq Numeric
 
-instance showValue :: Show Value where
+instance ordNumeric :: Ord Numeric where
+  compare (Integer a) (Integer b) = compare a b
+  compare a b = compare (toNumber a) (toNumber b)
+
+derive instance genericNumeric :: Generic Numeric _
+
+instance showNumeric :: Show Numeric where
   show = genericShow
 
-instance semiringValue :: Semiring Value where
-  add (IntValue a) (IntValue b) = IntValue (a + b)
-  add (IntValue a) (FloatValue b) = FloatValue (toNumber a + b)
-  add (FloatValue a) (IntValue b) = FloatValue (a + toNumber b)
-  add (FloatValue a) (FloatValue b) = FloatValue (a + b)
+instance semiringNumeric :: Semiring Numeric where
+  add (Integer a) (Integer b) = Integer (a + b)
+  add a b = Float (toNumber a + toNumber b)
+  zero = Integer 0
+  mul (Integer a) (Integer b) = Integer (a * b)
+  mul a b = Float (toNumber a * toNumber b)
+  one = Integer 1
 
-  zero = IntValue 0
+instance ringNumeric :: Ring Numeric where
+  sub (Integer a) (Integer b) = Integer (a - b)
+  sub a b = Float (toNumber a - toNumber b)
 
-  mul (IntValue a) (IntValue b) = IntValue (a * b)
-  mul (IntValue a) (FloatValue b) = FloatValue (toNumber a * b)
-  mul (FloatValue a) (IntValue b) = FloatValue (a * toNumber b)
-  mul (FloatValue a) (FloatValue b) = FloatValue (a * b)
+instance commutativeRingNumeric :: CommutativeRing Numeric
 
-  one = IntValue 1
-
-instance ringValue :: Ring Value where
-  sub (IntValue a) (IntValue b) = IntValue (a - b)
-  sub (IntValue a) (FloatValue b) = FloatValue (toNumber a - b)
-  sub (FloatValue a) (IntValue b) = FloatValue (a - toNumber b)
-  sub (FloatValue a) (FloatValue b) = FloatValue (a - b)
-
-instance commutativeRingValue :: CommutativeRing Value
-
-instance euclideanRingValue :: EuclideanRing Value where
-  degree (IntValue a) = degree a
-  degree (FloatValue a) = degree a
-
-  div (IntValue a) (IntValue b) = IntValue (a `Pre.div` b)
-  div (IntValue a) (FloatValue b) = FloatValue (toNumber a `Pre.div` b)
-  div (FloatValue a) (IntValue b) = FloatValue (a `Pre.div` toNumber b)
-  div (FloatValue a) (FloatValue b) = FloatValue (a `Pre.div` b)
-
-  mod (IntValue a) (IntValue b) = IntValue (a `Pre.mod` b)
-  mod (IntValue a) (FloatValue b) = FloatValue (toNumber a `Pre.mod` b)
-  mod (FloatValue a) (IntValue b) = FloatValue (a `Pre.mod` toNumber b)
-  mod (FloatValue a) (FloatValue b) = FloatValue (a `Pre.mod` b)
+instance euclideanRingNumeric :: EuclideanRing Numeric where
+  degree (Integer a) = degree a
+  degree (Float a) = degree a
+  div (Integer a) (Integer b) = Integer (a `Pre.div` b)
+  div a b = Float (toNumber a `Pre.div` toNumber b)
+  mod (Integer a) (Integer b) = Integer (a `Pre.mod` b)
+  mod a b = Float (toNumber a `Pre.mod` toNumber b)
 
 -- 演算子
 data Operator
@@ -72,22 +66,46 @@ derive instance genericOperator :: Generic Operator _
 instance showOperator :: Show Operator where
   show = genericShow
 
+-- 組み込み関数
+data BiltinFunction a
+  = Sum (Array a)
+  | Avg (Array a)
+  | Abs a
+  | Round a
+  | Floor a
+  | Ceil a
+  | Sqrt a
+  | Log a -- the natural logarithm
+
+derive instance eqBiltinFunction :: Eq a => Eq (BiltinFunction a)
+
+derive instance genericBiltinFunction :: Generic (BiltinFunction a) _
+
+instance showBiltinFunction :: Show a => Show (BiltinFunction a) where
+  show = genericShow
+
 -- 式
 data Expression
-  = ValueExpr Value
+  = ValueExpr Numeric
+  | FuncApplyExpr (BiltinFunction Expression)
   | BinOpExpr Operator Expression Expression
 
 derive instance eqExpr :: Eq Expression
 
 instance showExpression :: Show Expression where
   show (ValueExpr v) = "ValueExpr " <> show v
+  show (FuncApplyExpr f) = "FuncApplyExpr " <> show f
   show (BinOpExpr o e1 e2) = "BinOpExpr " <> show o <> " " <> show e1 <> " " <> show e2
 
 int :: Int -> Expression
-int = ValueExpr <<< IntValue
+int = ValueExpr <<< Integer
 
-float :: Number -> Expression
-float = ValueExpr <<< FloatValue
+numeric :: Either Int Number -> Expression
+numeric =
+  ValueExpr
+    <<< case _ of
+        Left i -> Integer i
+        Right n -> Float n
 
 add :: Expression -> Expression -> Expression
 add = BinOpExpr Add
