@@ -93,9 +93,11 @@ int :: Int -> Expression
 int = ValueExpr <<< Integer
 
 numeric :: Either Int Number -> Expression
-numeric = ValueExpr <<< case _ of
-  Left i -> Integer i
-  Right n -> Float n
+numeric =
+  ValueExpr
+    <<< case _ of
+        Left i -> Integer i
+        Right n -> Float n
 
 add :: Expression -> Expression -> Expression
 add = BinOpExpr Add

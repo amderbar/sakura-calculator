@@ -1,7 +1,6 @@
 module Test.Main where
 
 import Prelude
-
 import Data.Either (Either(..))
 import Data.Int (pow) as Int
 import Data.Newtype (class Newtype, unwrap)

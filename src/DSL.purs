@@ -1,7 +1,6 @@
 module Macro.DSL (run, eval, showResult) where
 
 import Prelude
-
 import Data.Array (length)
 import Data.Either (Either(..))
 import Data.Foldable (sum)
