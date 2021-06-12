@@ -6,9 +6,8 @@ import Data.Array (length)
 import Data.Either (Either(..))
 import Data.Foldable (sum)
 import Data.Int (pow) as Int
-import Data.Int (toNumber)
 import Data.Traversable (traverse)
-import Macro.DSL.Core (BiltinFunction(..), Expression(..), Numeric(..), Operator(..))
+import Macro.DSL.Core (toNumber, BiltinFunction(..), Expression(..), Numeric(..), Operator(..))
 import Macro.DSL.Parser (parseDSL)
 import Math (log, pow, sqrt) as Math
 
@@ -27,16 +26,13 @@ eval (FuncApplyExpr f) = case f of
   Avg v -> do
     total <- eval (FuncApplyExpr (Sum v))
     pure $ total / (Integer $ length v)
-  Sqrt v -> do
-    m <- eval v >>= case _ of
-      Integer i -> pure (toNumber i)
-      Float n -> pure n
-    pure (Float $ Math.sqrt m)
-  Log v -> do
-    m <- eval v >>= case _ of
-      Integer i -> pure (toNumber i)
-      Float n -> pure n
-    pure (Float $ Math.log m)
+  Sqrt v -> floatFunc Math.sqrt v
+  Log v -> floatFunc Math.log v
+  where
+  floatFunc :: (Number -> Number) -> Expression -> Either String Numeric
+  floatFunc func e = do
+    m <- toNumber <$> eval e
+    pure (Float $ func m)
 
 eval (BinOpExpr op expr1 expr2) = do
   ret1 <- eval expr1
@@ -53,11 +49,7 @@ eval (BinOpExpr op expr1 expr2) = do
 
   pow (Integer a) (Integer b) = Integer (a `Int.pow` b)
 
-  pow (Integer a) (Float b) = Float (toNumber a `Math.pow` b)
-
-  pow (Float a) (Integer b) = Float (a `Math.pow` toNumber b)
-
-  pow (Float a) (Float b) = Float (a `Math.pow` b)
+  pow a b = Float (toNumber a `Math.pow` toNumber b)
 
 showResult :: Numeric -> String
 showResult (Integer i) = show i
