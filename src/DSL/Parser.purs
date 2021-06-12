@@ -24,6 +24,7 @@ sakuraCalcLangage =
       , reservedNames =
         [ "sum"
         , "avg"
+        , "abs"
         , "sqrt"
         , "log"
         ]
@@ -42,7 +43,8 @@ expression = fix \expr -> buildExprParser operatorTable $ number <|> funcApply e
       <|> (reserved "avg" *> (DSL.Avg <$> e))
 
   valueFunc e =
-    (reserved "sqrt" *> (DSL.Sqrt <$> e))
+    (reserved "abs" *> (DSL.Abs <$> e))
+      <|> (reserved "sqrt" *> (DSL.Sqrt <$> e))
       <|> (reserved "log" *> (DSL.Log <$> e))
 
   funcApply e =

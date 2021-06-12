@@ -19,6 +19,10 @@ toNumber = case _ of
 
 derive instance eqNumeric :: Eq Numeric
 
+instance ordNumeric :: Ord Numeric where
+  compare (Integer a) (Integer b) = compare a b
+  compare a b = compare (toNumber a) (toNumber b)
+
 derive instance genericNumeric :: Generic Numeric _
 
 instance showNumeric :: Show Numeric where
@@ -66,6 +70,7 @@ instance showOperator :: Show Operator where
 data BiltinFunction a
   = Sum (Array a)
   | Avg (Array a)
+  | Abs a
   | Sqrt a
   | Log a -- the natural logarithm
 

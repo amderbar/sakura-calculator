@@ -5,6 +5,7 @@ import Data.Array (length)
 import Data.Either (Either(..))
 import Data.Foldable (sum)
 import Data.Int (pow) as Int
+import Data.Ord (abs)
 import Data.Traversable (traverse)
 import Macro.DSL.Core (toNumber, BiltinFunction(..), Expression(..), Numeric(..), Operator(..))
 import Macro.DSL.Parser (parseDSL)
@@ -25,6 +26,7 @@ eval (FuncApplyExpr f) = case f of
   Avg v -> do
     total <- eval (FuncApplyExpr (Sum v))
     pure $ total / (Integer $ length v)
+  Abs v -> abs <$> eval v
   Sqrt v -> floatFunc Math.sqrt v
   Log v -> floatFunc Math.log v
   where

@@ -95,6 +95,13 @@ main =
               DSL.run "2 / 2.0" `shouldEqual` Right (DSL.Float 1.0)
               DSL.run "1.0 * 1" `shouldEqual` Right (DSL.Float 1.0)
           describe "built-in functions" do
+            it "should return the right absolute value" do
+              DSL.run "abs 1" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "abs 1.0" `shouldEqual` Right (DSL.Float 1.0)
+              DSL.run "abs (-1)" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "abs (-1.0)" `shouldEqual` Right (DSL.Float 1.0)
+              DSL.run "abs ((-1) + 3)" `shouldEqual` Right (DSL.Integer 2)
+              DSL.run "abs (2 - 1.0)" `shouldEqual` Right (DSL.Float 1.0)
             it "should return the right square root" do
               DSL.run "sqrt 9" `shouldEqual` Right (DSL.Float 3.0)
               DSL.run "sqrt 9.0" `shouldEqual` Right (DSL.Float 3.0)
