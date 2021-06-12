@@ -1,6 +1,7 @@
 module Test.Main where
 
 import Prelude
+
 import Data.Either (Either(..))
 import Data.Int (pow) as Int
 import Data.Newtype (class Newtype, unwrap)
@@ -9,7 +10,7 @@ import Effect (Effect)
 import Effect.Aff (launchAff_)
 import Macro.DSL (run) as DSL
 import Macro.DSL.Core (Numeric(..)) as DSL
-import Math (pow) as Math
+import Math (log, pow) as Math
 import Test.QuickCheck ((<?>))
 import Test.QuickCheck (Result) as QuickCheck
 import Test.QuickCheck.Arbitrary (class Arbitrary, arbitrary)
@@ -94,7 +95,14 @@ main =
               DSL.run "3.0 - 2" `shouldEqual` Right (DSL.Float 1.0)
               DSL.run "2 / 2.0" `shouldEqual` Right (DSL.Float 1.0)
               DSL.run "1.0 * 1" `shouldEqual` Right (DSL.Float 1.0)
-          describe "array aggrigation functions" do
+          describe "built-in functions" do
+            it "should return the right logarithm" do
+              DSL.run "log 1" `shouldEqual` Right (DSL.Float (Math.log 1.0))
+              DSL.run "log 1.0" `shouldEqual` Right (DSL.Float (Math.log 1.0))
+              DSL.run "log (2 - 1)" `shouldEqual` Right (DSL.Float (Math.log 1.0))
+              DSL.run "log (3 / 3)" `shouldEqual` Right (DSL.Float (Math.log 1.0))
+              DSL.run "log ((-1) + 2)" `shouldEqual` Right (DSL.Float (Math.log 1.0))
+          describe "built-in array aggrigation functions" do
             it "should return the right total" do
               DSL.run "sum [1, 2, 3]" `shouldEqual` Right (DSL.Integer 6)
               DSL.run "sum [1, 2.0, 3]" `shouldEqual` Right (DSL.Float 6.0)

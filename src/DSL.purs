@@ -8,9 +8,9 @@ import Data.Foldable (sum)
 import Data.Int (pow) as Int
 import Data.Int (toNumber)
 import Data.Traversable (traverse)
-import Macro.DSL.Core (Expression(..), Operator(..), BiltinFunction(..), Numeric(..))
+import Macro.DSL.Core (BiltinFunction(..), Expression(..), Numeric(..), Operator(..))
 import Macro.DSL.Parser (parseDSL)
-import Math (pow) as Math
+import Math (log, pow) as Math
 
 run :: String -> Either String Numeric
 run src = do
@@ -22,11 +22,16 @@ run src = do
 eval :: Expression -> Either String Numeric
 eval (ValueExpr v) = pure v
 
-eval (AggExpr f v) = case f of
-  Sum -> sum <$> traverse eval v
-  Avg -> do
-    total <- eval (AggExpr Sum v)
+eval (FuncApplyExpr f) = case f of
+  Sum v -> sum <$> traverse eval v
+  Avg v -> do
+    total <- eval (FuncApplyExpr (Sum v))
     pure $ total / (Integer $ length v)
+  Log v -> do
+    m <- eval v >>= case _ of
+      Integer i -> pure (toNumber i)
+      Float n -> pure n
+    pure (Float $ Math.log m)
 
 eval (BinOpExpr op expr1 expr2) = do
   ret1 <- eval expr1

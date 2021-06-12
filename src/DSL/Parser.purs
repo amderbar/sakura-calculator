@@ -21,22 +21,27 @@ sakuraCalcLangage =
     (unGenLanguageDef emptyDef)
       { nestedComments = false
       , caseSensitive = false
-      , reservedNames = [ "sum", "avg" ]
+      , reservedNames = [ "sum", "avg", "log" ]
       }
 
 tokenParser :: TokenParser
 tokenParser = makeTokenParser sakuraCalcLangage
 
 expression :: Parser String DSL.Expression
-expression = fix \expr -> buildExprParser operatorTable $ number <|> aggregation expr <|> parens expr
+expression = fix \expr -> buildExprParser operatorTable $ number <|> funcApply expr <|> parens expr
   where
   number = DSL.numeric <$> tokenParser.naturalOrFloat
 
-  builtinFunc =
-    (reserved "sum" $> DSL.Sum)
-      <|> (reserved "avg" $> DSL.Avg)
+  arrayFunc e =
+    (reserved "sum" *> (DSL.Sum <$> e))
+      <|> (reserved "avg" *> (DSL.Avg <$> e))
 
-  aggregation e = DSL.AggExpr <$> builtinFunc <*> (brackets $ fromFoldable <$> commaSep e)
+  valueFunc e = (reserved "log" *> (DSL.Log <$> e))
+
+  funcApply e =
+    map DSL.FuncApplyExpr
+      $ arrayFunc (brackets $ fromFoldable <$> commaSep e)
+      <|> valueFunc e
 
   brackets = tokenParser.brackets
 

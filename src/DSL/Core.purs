@@ -68,28 +68,29 @@ instance showOperator :: Show Operator where
   show = genericShow
 
 -- 組み込み関数
-data BiltinFunction
-  = Sum
-  | Avg
+data BiltinFunction a
+  = Sum (Array a)
+  | Avg (Array a)
+  | Log a -- the natural logarithm
 
-derive instance eqBiltinFunction :: Eq BiltinFunction
+derive instance eqBiltinFunction :: Eq a => Eq (BiltinFunction a)
 
-derive instance genericBiltinFunction :: Generic BiltinFunction _
+derive instance genericBiltinFunction :: Generic (BiltinFunction a) _
 
-instance showBiltinFunction :: Show BiltinFunction where
+instance showBiltinFunction :: Show a => Show (BiltinFunction a) where
   show = genericShow
 
 -- 式
 data Expression
   = ValueExpr Numeric
-  | AggExpr BiltinFunction (Array Expression)
+  | FuncApplyExpr (BiltinFunction Expression)
   | BinOpExpr Operator Expression Expression
 
 derive instance eqExpr :: Eq Expression
 
 instance showExpression :: Show Expression where
   show (ValueExpr v) = "ValueExpr " <> show v
-  show (AggExpr f v) = "AggExpr " <> show f <> " " <> show v
+  show (FuncApplyExpr f) = "FuncApplyExpr " <> show f
   show (BinOpExpr o e1 e2) = "BinOpExpr " <> show o <> " " <> show e1 <> " " <> show e2
 
 int :: Int -> Expression
