@@ -96,6 +96,11 @@ main =
               DSL.run "2 / 2.0" `shouldEqual` Right (DSL.Float 1.0)
               DSL.run "1.0 * 1" `shouldEqual` Right (DSL.Float 1.0)
           describe "built-in functions" do
+            it "should return the right square root" do
+              DSL.run "sqrt 9" `shouldEqual` Right (DSL.Float 3.0)
+              DSL.run "sqrt 9.0" `shouldEqual` Right (DSL.Float 3.0)
+              DSL.run "sqrt (4 + 5)" `shouldEqual` Right (DSL.Float 3.0)
+              DSL.run "sqrt (3 * 3)" `shouldEqual` Right (DSL.Float 3.0)
             it "should return the right logarithm" do
               DSL.run "log 1" `shouldEqual` Right (DSL.Float (Math.log 1.0))
               DSL.run "log 1.0" `shouldEqual` Right (DSL.Float (Math.log 1.0))

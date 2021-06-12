@@ -10,7 +10,7 @@ import Data.Int (toNumber)
 import Data.Traversable (traverse)
 import Macro.DSL.Core (BiltinFunction(..), Expression(..), Numeric(..), Operator(..))
 import Macro.DSL.Parser (parseDSL)
-import Math (log, pow) as Math
+import Math (log, pow, sqrt) as Math
 
 run :: String -> Either String Numeric
 run src = do
@@ -27,6 +27,11 @@ eval (FuncApplyExpr f) = case f of
   Avg v -> do
     total <- eval (FuncApplyExpr (Sum v))
     pure $ total / (Integer $ length v)
+  Sqrt v -> do
+    m <- eval v >>= case _ of
+      Integer i -> pure (toNumber i)
+      Float n -> pure n
+    pure (Float $ Math.sqrt m)
   Log v -> do
     m <- eval v >>= case _ of
       Integer i -> pure (toNumber i)

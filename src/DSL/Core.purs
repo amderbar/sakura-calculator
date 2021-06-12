@@ -71,6 +71,7 @@ instance showOperator :: Show Operator where
 data BiltinFunction a
   = Sum (Array a)
   | Avg (Array a)
+  | Sqrt a
   | Log a -- the natural logarithm
 
 derive instance eqBiltinFunction :: Eq a => Eq (BiltinFunction a)

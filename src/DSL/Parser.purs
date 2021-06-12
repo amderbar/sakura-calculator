@@ -21,7 +21,12 @@ sakuraCalcLangage =
     (unGenLanguageDef emptyDef)
       { nestedComments = false
       , caseSensitive = false
-      , reservedNames = [ "sum", "avg", "log" ]
+      , reservedNames =
+        [ "sum"
+        , "avg"
+        , "sqrt"
+        , "log"
+        ]
       }
 
 tokenParser :: TokenParser
@@ -36,7 +41,9 @@ expression = fix \expr -> buildExprParser operatorTable $ number <|> funcApply e
     (reserved "sum" *> (DSL.Sum <$> e))
       <|> (reserved "avg" *> (DSL.Avg <$> e))
 
-  valueFunc e = (reserved "log" *> (DSL.Log <$> e))
+  valueFunc e =
+    (reserved "sqrt" *> (DSL.Sqrt <$> e))
+      <|> (reserved "log" *> (DSL.Log <$> e))
 
   funcApply e =
     map DSL.FuncApplyExpr
