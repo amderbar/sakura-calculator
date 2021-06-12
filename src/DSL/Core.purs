@@ -71,6 +71,9 @@ data BiltinFunction a
   = Sum (Array a)
   | Avg (Array a)
   | Abs a
+  | Round a
+  | Floor a
+  | Ceil a
   | Sqrt a
   | Log a -- the natural logarithm
 

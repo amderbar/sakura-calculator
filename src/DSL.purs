@@ -4,10 +4,10 @@ import Prelude
 import Data.Array (length)
 import Data.Either (Either(..))
 import Data.Foldable (sum)
-import Data.Int (pow) as Int
+import Data.Int (ceil, floor, pow, round) as Int
 import Data.Ord (abs)
 import Data.Traversable (traverse)
-import Macro.DSL.Core (toNumber, BiltinFunction(..), Expression(..), Numeric(..), Operator(..))
+import Macro.DSL.Core (BiltinFunction(..), Expression(..), Numeric(..), Operator(..), toNumber)
 import Macro.DSL.Parser (parseDSL)
 import Math (log, pow, sqrt) as Math
 
@@ -27,9 +27,17 @@ eval (FuncApplyExpr f) = case f of
     total <- eval (FuncApplyExpr (Sum v))
     pure $ total / (Integer $ length v)
   Abs v -> abs <$> eval v
+  Round v -> intFunc Int.round <$> eval v
+  Floor v -> intFunc Int.floor <$> eval v
+  Ceil v -> intFunc Int.ceil <$> eval v
   Sqrt v -> floatFunc Math.sqrt v
   Log v -> floatFunc Math.log v
   where
+  intFunc :: (Number -> Int) -> Numeric -> Numeric
+  intFunc func = case _ of
+    n@(Integer _) -> n
+    (Float n) -> Integer (func n)
+
   floatFunc :: (Number -> Number) -> Expression -> Either String Numeric
   floatFunc func e = do
     m <- toNumber <$> eval e

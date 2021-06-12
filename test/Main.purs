@@ -102,6 +102,27 @@ main =
               DSL.run "abs (-1.0)" `shouldEqual` Right (DSL.Float 1.0)
               DSL.run "abs ((-1) + 3)" `shouldEqual` Right (DSL.Integer 2)
               DSL.run "abs (2 - 1.0)" `shouldEqual` Right (DSL.Float 1.0)
+            it "should return the right rounded value" do
+              DSL.run "round 1" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "round 1.2" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "round 0.7" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "round (-1)" `shouldEqual` Right (DSL.Integer (-1))
+              DSL.run "round (-1.2)" `shouldEqual` Right (DSL.Integer (-1))
+              DSL.run "round (-0.7)" `shouldEqual` Right (DSL.Integer (-1))
+            it "should return the right floored value" do
+              DSL.run "floor 1" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "floor 1.2" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "floor 1.7" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "floor (-1)" `shouldEqual` Right (DSL.Integer (-1))
+              DSL.run "floor (-0.2)" `shouldEqual` Right (DSL.Integer (-1))
+              DSL.run "floor (-0.7)" `shouldEqual` Right (DSL.Integer (-1))
+            it "should return the right ceiled value" do
+              DSL.run "ceil 1" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "ceil 0.2" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "ceil 0.7" `shouldEqual` Right (DSL.Integer 1)
+              DSL.run "ceil (-1)" `shouldEqual` Right (DSL.Integer (-1))
+              DSL.run "ceil (-1.2)" `shouldEqual` Right (DSL.Integer (-1))
+              DSL.run "ceil (-1.7)" `shouldEqual` Right (DSL.Integer (-1))
             it "should return the right square root" do
               DSL.run "sqrt 9" `shouldEqual` Right (DSL.Float 3.0)
               DSL.run "sqrt 9.0" `shouldEqual` Right (DSL.Float 3.0)
