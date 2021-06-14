@@ -5,7 +5,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "spago bundle-app -m Macro.Main -t dist/sakura-calculator.js",
+    "build": "spago bundle-app -m Macro.Main -t dist/sakura-calculator.js --then 'minify dist/sakura-calculator.js > dist/sakura-calculator.min.js'",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
     "test": "spago test"
@@ -26,6 +26,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "minify": "^7.0.2",
     "purescript": "^0.14.1",
     "purty": "^7.0.0",
     "spago": "^0.20.3"
