@@ -1,4 +1,4 @@
-exports.load = function load () {
+export function load () {
     // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/map#polyfill
     // Production steps of ECMA-262, Edition 5, 15.4.4.19
     // Reference: http://es5.github.io/#x15.4.4.19

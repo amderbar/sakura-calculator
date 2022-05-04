@@ -6,11 +6,11 @@ import Control.Lazy (fix)
 import Data.Array (fromFoldable)
 import Data.Either (Either)
 import Macro.DSL.Core as DSL
-import Text.Parsing.Parser (Parser, ParseError, runParser)
-import Text.Parsing.Parser.Expr (Assoc(..), Operator(..), buildExprParser)
-import Text.Parsing.Parser.Language (emptyDef)
-import Text.Parsing.Parser.String (eof)
-import Text.Parsing.Parser.Token (LanguageDef, TokenParser, GenLanguageDef(..), unGenLanguageDef, makeTokenParser)
+import Parsing (Parser, ParseError, runParser)
+import Parsing.Expr (Assoc(..), Operator(..), buildExprParser)
+import Parsing.Language (emptyDef)
+import Parsing.String (eof)
+import Parsing.Token (LanguageDef, TokenParser, GenLanguageDef(..), unGenLanguageDef, makeTokenParser)
 
 parseDSL :: String -> Either ParseError DSL.Expression
 parseDSL input = runParser input (expression <* eof)

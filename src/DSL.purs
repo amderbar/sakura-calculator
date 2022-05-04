@@ -5,11 +5,11 @@ import Data.Array (length)
 import Data.Either (Either(..))
 import Data.Foldable (sum)
 import Data.Int (ceil, floor, pow, round) as Int
+import Data.Number (log, pow, sqrt) as Num
 import Data.Ord (abs)
 import Data.Traversable (traverse)
 import Macro.DSL.Core (BiltinFunction(..), Expression(..), Numeric(..), Operator(..), toNumber)
 import Macro.DSL.Parser (parseDSL)
-import Math (log, pow, sqrt) as Math
 
 run :: String -> Either String Numeric
 run src = do
@@ -30,8 +30,8 @@ eval (FuncApplyExpr f) = case f of
   Round v -> intFunc Int.round <$> eval v
   Floor v -> intFunc Int.floor <$> eval v
   Ceil v -> intFunc Int.ceil <$> eval v
-  Sqrt v -> floatFunc Math.sqrt <$> eval v
-  Log v -> floatFunc Math.log <$> eval v
+  Sqrt v -> floatFunc Num.sqrt <$> eval v
+  Log v -> floatFunc Num.log <$> eval v
   where
   intFunc :: (Number -> Int) -> Numeric -> Numeric
   intFunc func = case _ of
@@ -56,7 +56,7 @@ eval (BinOpExpr op expr1 expr2) = do
 
   pow (Integer a) (Integer b) = Integer (a `Int.pow` b)
 
-  pow a b = Float (toNumber a `Math.pow` toNumber b)
+  pow a b = Float (toNumber a `Num.pow` toNumber b)
 
 showResult :: Numeric -> String
 showResult = case _ of
