@@ -7,7 +7,7 @@
  */
 export function getEditor () {
     return Editor;
-};
+}
 
 /**
  * エディタのカーソル位置に文字列を挿入する
@@ -15,7 +15,7 @@ export function getEditor () {
  */
 export function insTextImpl (editor, text) {
     editor.InsText(text);
-};
+}
 
 /**
  * 選択状態の文字列を取得する
@@ -23,7 +23,7 @@ export function insTextImpl (editor, text) {
  */
 export function getSelectedStringImpl (editor) {
     return editor.GetSelectedString(0);
-};
+}
 
 /**
  * エラーメッセージボックスを表示する
@@ -31,4 +31,4 @@ export function getSelectedStringImpl (editor) {
  */
 export function errorMsgImpl (editor, text) {
     editor.ErrorMsg(text);
-};
+}
